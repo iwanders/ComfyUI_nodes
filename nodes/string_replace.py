@@ -1,7 +1,7 @@
 import os
 import json
 
-class ReplaceString:
+class StringReplace:
     def __init__(self):
         pass
 

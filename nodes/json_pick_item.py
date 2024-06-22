@@ -1,7 +1,7 @@
 import os
 import json
 
-class PickItemJson:
+class JsonPickItem:
     def __init__(self):
         pass
 
@@ -10,7 +10,7 @@ class PickItemJson:
         return {
             "required": {
                 "pick_value": ("INT",{"defaultInput": True, "default": 0}),
-                "input": ("STRING",{"defaultInput": True, "default": "", "dynamicPrompts": False, "multiline": True}),
+                "input": ("STRING",{"defaultInput": False, "default": "", "dynamicPrompts": False, "multiline": True}),
             },
             "optional": {
             },

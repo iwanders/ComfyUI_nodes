@@ -1,5 +1,5 @@
 
-class PrintString:
+class StringPrint:
     def __init__(self):
         pass
     

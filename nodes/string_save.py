@@ -2,7 +2,7 @@ import folder_paths
 import os
 import json
 
-class SaveString:
+class StringSave:
     def __init__(self):
         self.output_dir = folder_paths.get_output_directory()
         pass
