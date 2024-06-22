@@ -10,7 +10,7 @@ class PickItemJson:
         return {
             "required": {
                 "pick_value": ("INT",{"defaultInput": True, "default": 0}),
-                "input": ("STRING",{"defaultInput": True, "default": "", "dynamicPrompts": False}),
+                "input": ("STRING",{"defaultInput": True, "default": "", "dynamicPrompts": False, "multiline": True}),
             },
             "optional": {
             },
