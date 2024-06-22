@@ -1,8 +1,8 @@
-from .save_string import SaveString
-from .print_string import PrintString
-from .replace_string import ReplaceString
-from .tokenizer_vocab import TokenizerVocab
-from .pick_item_json import PickItemJson
+from .nodes.save_string import SaveString
+from .nodes.print_string import PrintString
+from .nodes.replace_string import ReplaceString
+from .nodes.tokenizer_vocab import TokenizerVocab
+from .nodes.pick_item_json import PickItemJson
 
 NODE_CLASS_MAPPINGS = {
     "IW_SaveString": SaveString,
