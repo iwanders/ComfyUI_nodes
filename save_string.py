@@ -1,5 +1,6 @@
 import folder_paths
 import os
+import json
 
 class SaveString:
     def __init__(self):
@@ -30,6 +31,10 @@ class SaveString:
         full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path(filename_prefix, self.output_dir)
         file = f"{filename}_{counter:05}_{filename_suffix}.{extension}"
         path = os.path.join(full_output_folder, file)
+
+        if extension == "json":
+            string_field = json.dumps(json.loads(string_field), indent=4)
+
         with open(path, "w") as f:
             f.write(string_field)
         return tuple()
