@@ -5,6 +5,7 @@ from .nodes.string_node import StringNode
 from .nodes.string_concat import StringConcat
 from .nodes.tokenizer_vocab import TokenizerVocab
 from .nodes.json_pick_item import JsonPickItem
+from .nodes.model_hook import ModelHook
 
 NODE_CLASS_MAPPINGS = {
     "IW_StringSave": StringSave,
@@ -16,6 +17,8 @@ NODE_CLASS_MAPPINGS = {
     "IW_TokenizerVocab": TokenizerVocab,
 
     "IW_JsonPickItem": JsonPickItem,
+
+    "IW_ModelHook": ModelHook,
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
@@ -29,5 +32,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "IW_TokenizerVocab": "IW TokenizerVocab",
 
     "IW_JsonPickItem": "IW JsonPickItem",
+
+    "IW_ModelHook": "IW ModelHook",
 }
 
