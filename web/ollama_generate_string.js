@@ -43,9 +43,11 @@ app.registerExtension({
       };
 
       nodeType.prototype.setupWidgets = function (model_list) {  
-        let default_model = model_list[0];
-
-        this.addWidget(
+        //let default_model = model_list[0];
+        //let w = find_widget(this, "model");
+        //w.widgets_values = model_list; 
+        //this.removeWidget("model");
+        /*this.addWidget(
           "combo",
           "model",
           default_model,
@@ -56,7 +58,7 @@ app.registerExtension({
             values: model_list,
             default: default_model,
           }
-        );
+        );*/
  
       };
 
