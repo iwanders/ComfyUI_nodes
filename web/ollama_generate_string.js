@@ -42,7 +42,8 @@ app.registerExtension({
         this.setupWidgets(app._iw_ollama_generate_string.model_list);  
       };
 
-      nodeType.prototype.setupWidgets = function (model_list) {  
+      nodeType.prototype.setupWidgets = function (model_list) {
+        // https://docs.comfy.org/custom-nodes/js/javascript_objects_and_hijacking#inputs-outputs-widgets
         //let default_model = model_list[0];
         //let w = find_widget(this, "model");
         //w.widgets_values = model_list; 

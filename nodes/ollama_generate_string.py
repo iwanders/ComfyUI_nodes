@@ -50,15 +50,15 @@ class OllamaGenerateString :
         return {
             "required": {
                 "generate": ("BOOLEAN", {"default": True, "label_on": "Generating New", "label_off": "Reusing", "tooltip": "Whether to cycle the result, or keep it fixed to the currently shown value."}),
+
                 "generate_seed": ("INT",{"defaultInput": True}),
                 "generate_prompt": ("STRING",{"defaultInput": True, "default": "", "multiline": True, "dynamicPrompts": False}),
+                "generate_model": (MODEL_LIST, {"default":MODEL_LIST[0] if MODEL_LIST else ""}),
                 # And the actually used values follow;
-                "use_seed": ("INT",{"defaultInput": False, "disabled": True, "default":"",}),
+                "use_seed": ("INT", {"defaultInput": False, "disabled": True, "default":0,}),
                 "use_result": ("STRING",{"defaultInput": False, "multiline": True, "default":"",}), 
                 "use_prompt": ("STRING",{"defaultInput": False, "multiline": True, "default":"",}), 
-
-                #"model": ("COMBO",{"defaultInput": False, "default":"",}), 
-                "model": (MODEL_LIST, {"default":MODEL_LIST[0] if MODEL_LIST else ""}),
+ 
             },
             "optional": {
             }, 
@@ -73,13 +73,13 @@ class OllamaGenerateString :
     CATEGORY = "iw"
 
     @classmethod
-    def IS_CHANGED(cls,model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
+    def IS_CHANGED(cls,generate_model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
         return "foo"
 
 
-    def execute(self,model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
+    async def execute(self,generate_model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
         result = (use_result,) 
-        print(f"executing with {model} {generate} {generate_seed} {generate_prompt}")
+        print(f"executing with {generate_model} {generate} {generate_seed} {generate_prompt}")
         print(f"      Using    {use_seed} {use_result} {use_prompt}")
         
      
