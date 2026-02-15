@@ -73,7 +73,7 @@ class OllamaGenerateString :
     CATEGORY = "iw"
 
     @classmethod
-    def IS_CHANGED(cls,generate_model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
+    def IS_CHANGED(cls, generate_model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
         return "foo"
 
 
@@ -84,34 +84,16 @@ class OllamaGenerateString :
         
      
         if generate and MODEL_LIST:
-            """
-                curl http://localhost:11434/api/generate -d '{
-                  "model": "gemma3",
-                  "prompt": "Why is the sky blue?"
-                }'
-            """
-
-            """
-            async def request(): 
-                url = "https://httpbin.org/post" # An endpoint that echoes POST data
-                payload = {"model": "value", "example": "test"}
-                headers = {"Content-Type": "application/json"} # Optional: specify content type
-
-                # Use a ClientSession as an async context manager to manage connections
-                async with aiohttp.ClientSession(headers=headers) as session:
-                    # Perform the POST request asynchronously and await the response
-                    async with session.post(url, json=payload) as response:
-                        # Await the response data (e.g., as JSON)
-                        print(f"Status: {response.status}")
-                        response_json = await response.json()
-                        print("Response JSON:")
-                        print(json.dumps(response_json, indent=2))
-         
-            asyncio.run(main())
-            """
             next_seed = generate_seed
-            next_result = f"generated with {generate_prompt} and seed {generate_seed}"
             next_prompt = generate_prompt
+
+            payload = {"model": generate_model, "prompt": generate_prompt, "stream": False, "options": {"seed": generate_seed}}
+            headers = {"Content-Type": "application/json"} 
+ 
+            async with aiohttp.ClientSession(headers=headers) as session: 
+                async with session.post(f"http://{OLLAMA_HOST}/api/generate", json=payload) as response:
+                    response_json = await response.json() #content_type=None 
+                    next_result = response_json["response"]
         else:
             next_seed = use_seed
             next_result = use_result
