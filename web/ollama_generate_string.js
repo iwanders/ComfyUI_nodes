@@ -5,28 +5,45 @@ import { ComfyWidgets } from "../../scripts/widgets.js";
 app.registerExtension({
   name: "iw.ollama.generate",
 
-  async beforeRegisterNodeDef(nodeType, nodeData, app) { 
+  async beforeRegisterNodeDef(nodeType, nodeData, app) {
     let find_widget = (node, name) => node.widgets.find((w) => w.name === name);
+
+
+
     if (nodeData.name === "IW_OllamaGenerateString") {
+
+
+      const resp = await api.fetchApi('/iw/api/ollama/models', { });
+
+      if (resp.status !== 200) {
+        const err = `Error uploading temp file: ${resp.status} - ${resp.statusText}`
+        useToastStore().addAlert(err)
+        throw new Error(err)
+      }
+      const result_in_json = await resp.json();
+      const model_list = result_in_json.models;
+      console.log("model list:", model_list)
+
       console.log("Something ollama thing");
+
       nodeType.prototype.initState = function () {
         console.log("hello");
       };
       nodeType.prototype.initWidgets = function (app) { 
-        this.setupWidgets(); 
+        this.setupWidgets(model_list);  
       };
 
-      nodeType.prototype.setupWidgets = function (app) {
+      nodeType.prototype.setupWidgets = function (app, models) {
         this.addWidget(
           "combo",
           "model",
-          "unknown",
+          model_list[0],
           (value) => {
             this.tool = value;
           },
           {
-            values: ["a", "b", "c"],
-            default: "unknown",
+            values: model_list,
+            default: model_list[0],
           }
         );
  
