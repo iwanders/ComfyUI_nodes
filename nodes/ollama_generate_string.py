@@ -7,6 +7,7 @@ from aiohttp import web
 import aiohttp
 import asyncio
 import requests
+import time
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "127.0.0.1:11434")
 
@@ -41,8 +42,24 @@ def get_model_list():
 MODEL_LIST = get_model_list()
 
 
+from collections import OrderedDict
+
+# Dict with upper bound, made by the llm.
+class MaxSizeDict(OrderedDict):
+    def __init__(self, max_size, *args, **kwargs):
+        self.max_size = max_size
+        super().__init__(*args, **kwargs)
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+        if self.max_size > 0 and len(self) > self.max_size:
+            # Remove the oldest item (popitem(False) removes the first item added)
+            self.popitem(last=False)
+
+
 class OllamaGenerateString :
     def __init__(self): 
+        self._cache = MaxSizeDict(10)
         pass
 
     @classmethod
@@ -74,27 +91,55 @@ class OllamaGenerateString :
 
     @classmethod
     def IS_CHANGED(cls, generate_model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
-        return "foo"
+        """
+            Despite the name, IS_CHANGED should not return a bool
+            IS_CHANGED is passed the same arguments as the main function defined by FUNCTION,
+            and can return any Python object. This object is compared with the one returned in
+            the previous run (if any) and the node will be considered to have changed if
+            is_changed != is_changed_old (this code is in execution.py if you need to dig).
+        """
+        #print(f"IS_CHANGED executing with {generate_model} {generate} {repr(generate_seed)} {generate_prompt}")
+        #print(f"IS_CHANGED       Using    {repr(use_seed)}    {use_prompt}   {len(use_result)} ")
+        #if generate:
+        #    # User can still modify these values from the UI, so lets just put them here.
+        #    return time.time();
+
+        # we are generating, if seed & prompt is the same, we don't need to run.
+        # additionally... what's worse is that if generate_seed is a separate node, it is always None :<
+        # So we can't do this smart check here...
+        #if use_seed == generate_seed and use_prompt == generate_prompt:
+        #    print("Nothing to do" )
+        #    return False
+
+        # Otherwise... lets just return the values as we'd currently get from the UI... 
+        return f"{use_result} {use_seed} {use_prompt}"
 
 
     async def execute(self,generate_model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
-        result = (use_result,) 
-        print(f"executing with {generate_model} {generate} {generate_seed} {generate_prompt}")
-        print(f"      Using    {use_seed} {use_result} {use_prompt}")
+        #print(f"executing with {generate_model} {generate} {generate_seed} {generate_prompt}")
+        #print(f"      Using    {use_seed} {use_prompt}  res is {len(use_result)} ")
         
      
         if generate and MODEL_LIST:
             next_seed = generate_seed
             next_prompt = generate_prompt
 
-            payload = {"model": generate_model, "prompt": generate_prompt, "stream": False, "options": {"seed": generate_seed}}
-            headers = {"Content-Type": "application/json"} 
- 
-            async with aiohttp.ClientSession(headers=headers) as session: 
-                async with session.post(f"http://{OLLAMA_HOST}/api/generate", json=payload) as response:
-                    response_json = await response.json() #content_type=None 
-                    next_result = response_json["response"]
+            # Since IS_CHANGED above is super clunky and doesn't get the seed, do this quick cache thing here.
+            key = (generate_seed, generate_model, generate_prompt)
+
+            # if we don't have this in the cache, actually run the model and cache it.
+            if not key in self._cache:
+                payload = {"model": generate_model, "prompt": generate_prompt, "stream": False, "options": {"seed": generate_seed}}
+                headers = {"Content-Type": "application/json"} 
+     
+                async with aiohttp.ClientSession(headers=headers) as session: 
+                    async with session.post(f"http://{OLLAMA_HOST}/api/generate", json=payload) as response:
+                        response_json = await response.json() #content_type=None 
+                        self._cache[key] = response_json["response"]
+
+            next_result = self._cache[key]
         else:
+            # Using data from the UI as-is.
             next_seed = use_seed
             next_result = use_result
             next_prompt = use_prompt
@@ -105,7 +150,7 @@ class OllamaGenerateString :
                     "next_result": [next_result,],
                     "next_prompt": [next_prompt,],
                     },
-            "result": result
+            "result": [use_result,],
         } 
 
 @PromptServer.instance.routes.get("/iw/api/ollama/models")
