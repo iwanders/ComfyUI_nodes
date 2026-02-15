@@ -5,45 +5,52 @@ import { ComfyWidgets } from "../../scripts/widgets.js";
 app.registerExtension({
   name: "iw.ollama.generate",
 
+  async setup(app) {
+    const resp = await api.fetchApi('/iw/api/ollama/models', { });
+
+    if (resp.status !== 200) {
+      const err = `Error uploading temp file: ${resp.status} - ${resp.statusText}`
+      useToastStore().addAlert(err)
+      throw new Error(err)
+    }
+    const result_in_json = await resp.json();
+    const model_list = result_in_json.models; 
+
+    app._iw_ollama_generate_string = {
+      "model_list": model_list
+    };
+
+  },
+
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
-    let find_widget = (node, name) => node.widgets.find((w) => w.name === name);
-
-
+    let find_widget = (node, name) => node.widgets.find((w) => w.name === name); 
+    let extension = this;
 
     if (nodeData.name === "IW_OllamaGenerateString") {
 
-
-      const resp = await api.fetchApi('/iw/api/ollama/models', { });
-
-      if (resp.status !== 200) {
-        const err = `Error uploading temp file: ${resp.status} - ${resp.statusText}`
-        useToastStore().addAlert(err)
-        throw new Error(err)
-      }
-      const result_in_json = await resp.json();
-      const model_list = result_in_json.models;
-      console.log("model list:", model_list)
 
       console.log("Something ollama thing");
 
       nodeType.prototype.initState = function () {
         console.log("hello");
       };
-      nodeType.prototype.initWidgets = function (app) { 
-        this.setupWidgets(model_list);  
+      nodeType.prototype.initWidgets = function (app) {  
+        this.setupWidgets(app._iw_ollama_generate_string.model_list);  
       };
 
-      nodeType.prototype.setupWidgets = function (app, models) {
+      nodeType.prototype.setupWidgets = function (model_list) {  
+        let default_model = model_list[0];
+
         this.addWidget(
           "combo",
           "model",
-          model_list[0],
+          default_model,
           (value) => {
             this.tool = value;
           },
           {
             values: model_list,
-            default: model_list[0],
+            default: default_model,
           }
         );
  

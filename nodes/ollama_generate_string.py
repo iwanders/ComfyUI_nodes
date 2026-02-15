@@ -8,6 +8,7 @@ import aiohttp
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "127.0.0.1:11434")
 
+
 class OllamaGenerateString :
     def __init__(self): 
         pass
@@ -42,11 +43,15 @@ class OllamaGenerateString :
 
 @PromptServer.instance.routes.get("/iw/api/ollama/models")
 async def retrieve_models(request):
-    print("/iw/api/ollama/models") 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://{OLLAMA_HOST}/api/tags') as response:
-            body = await response.json()
-            model_simple = [v["model"] for v in body["models"]]
-            return web.json_response({"status": "success", "models": model_simple}, status=200)
+    print("/iw/api/ollama/models")
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'http://{OLLAMA_HOST}/api/tags') as response:
+                body = await response.json()
+                model_simple = [v["model"] for v in body["models"]]
+                return web.json_response({"status": "success", "models": model_simple}, status=200)
+    except aiohttp.client_exceptions.ClientConnectorError as e:
+        return web.json_response({"status": "success", "models": ["ollama is down"]}, status=200)
+        
 
     return web.json_response({"status": "fail"}, status=500)
