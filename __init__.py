@@ -4,6 +4,7 @@ from .nodes.string_replace import StringReplace
 from .nodes.string_node import StringNode
 from .nodes.string_concat import StringConcat
 from .nodes.string_from_int import StringFromInt
+from .nodes.ollama_generate_string import OllamaGenerateString
 
 from .nodes.tokenizer_vocab import TokenizerVocab
 
@@ -24,6 +25,7 @@ NODE_CLASS_MAPPINGS = {
     "IW_JsonPickItem": JsonPickItem,
 
     "IW_ModelHook": ModelHook,
+   "IW_OllamaGenerateString": OllamaGenerateString,
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
@@ -40,5 +42,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "IW_JsonPickItem": "IW JsonPickItem",
 
     "IW_ModelHook": "IW ModelHook",
+   "IW_OllamaGenerateString": "IW Ollama Generate String",
 }
 
+
+
+WEB_DIRECTORY = "./web"
