@@ -9,7 +9,7 @@ Some custom nodes for [ComfyUI](https://github.com/comfyanonymous/ComfyUI).
 - `StringConcat`: Concatenates the prefix with the suffix and returns the combined string.
 - `JsonPickItem`: Pick an element from a json list using the provided pick (integer) value.
 - `TokenizerVocab`: Converts the tokenizer vocabulary to a json string (limited to SDXL clips atm).
-
+- `OllamaGenerateString`: A simple ollama-llm text generator, off-by-one to ensure the UI & png holds the actual text used for image generation.
 
 ### License
 License is GPLv3, just like ComfyUI.

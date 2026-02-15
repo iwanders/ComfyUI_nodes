@@ -112,7 +112,7 @@ class OllamaGenerateString :
         #    return False
 
         # Otherwise... lets just return the values as we'd currently get from the UI... 
-        return f"{use_result} {use_seed} {use_prompt}"
+        return f"{use_result} {use_seed} {use_prompt} {generate_seed} {generate_model} {generate_seed}"
 
 
     async def execute(self,generate_model, generate_seed, generate_prompt, use_seed=None, use_result=None, use_prompt=None, generate=True): 
